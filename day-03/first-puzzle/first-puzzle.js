@@ -1,3 +1,19 @@
+/*
+    const altura = 5000;
+    const largura = 20000;
+    const matrix = [];
+    for (let i = 0; i < largura; i++) {
+      matrix[i] = [];
+      for (let j = 0; j < altura; j++) {
+        matrix[i][j] = '.';
+      }
+    }
+    
+    centerX = largura / 2 + (largura / 5);
+    centerY = altura / 2;
+
+*/
+
 const printMatrix = function (matrix) {
     for (let i = 0; i < 10; i++) {
         let line = '';
