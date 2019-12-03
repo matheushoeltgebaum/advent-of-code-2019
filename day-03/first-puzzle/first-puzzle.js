@@ -43,9 +43,17 @@ const drawLine = function (x, y, wirePoints, matrix) {
                         matrix[x_position][y_position - i] = '|';
                     }
                 }
-                if (indexLine !== wirePoints.length - 1) {
+
+                if (indexLine === wirePoints.length - 1) {
+                    if (matrix[x_position][y_position - count] === '|' || matrix[x_position][y_position - count] === '-' || matrix[x_position][y_position - count] === '+') {
+                        matrix[x_position][y_position - count] = 'X';
+                    } else {
+                        matrix[x_position][y_position - count] = '|';
+                    }
+                } else {
                     matrix[x_position][y_position - count] = '+';
                 }
+                
                 y_position = y_position - count;
                 break;
             case 'R':
@@ -57,7 +65,13 @@ const drawLine = function (x, y, wirePoints, matrix) {
                     }
                 }
 
-                if (indexLine !== wirePoints.length - 1) {
+                if (indexLine === wirePoints.length - 1) {
+                    if (matrix[x_position + count][y_position] === '|' || matrix[x_position + count][y_position] === '-' || matrix[x_position + count][y_position] === '+') {
+                        matrix[x_position + count][y_position] = 'X';
+                    } else {
+                        matrix[x_position + count][y_position] = '-';
+                    }
+                } else {
                     matrix[x_position + count][y_position] = '+';
                 }
                 x_position = x_position + count;
@@ -70,7 +84,14 @@ const drawLine = function (x, y, wirePoints, matrix) {
                         matrix[x_position][y_position + i] = '|';
                     }
                 }
-                if (indexLine !== wirePoints.length - 1) {
+
+                if (indexLine === wirePoints.length - 1) {
+                    if (matrix[x_position][y_position + count] === '|' || matrix[x_position][y_position + count] === '-' || matrix[x_position][y_position + count] === '+') {
+                        matrix[x_position][y_position + count] = 'X';
+                    } else {
+                        matrix[x_position][y_position + count] = '|';
+                    }
+                } else {
                     matrix[x_position][y_position + count] = '+';
                 }
                 y_position = y_position + count;
@@ -83,7 +104,14 @@ const drawLine = function (x, y, wirePoints, matrix) {
                         matrix[x_position - i][y_position] = '-';
                     }
                 }
-                if (indexLine !== wirePoints.length - 1) {
+
+                if (indexLine === wirePoints.length - 1) {
+                    if (matrix[x_position - count][y_position] === '|' || matrix[x_position - count][y_position] === '-' || matrix[x_position - count][y_position] === '+') {
+                        matrix[x_position - count][y_position] = 'X';
+                    } else {
+                        matrix[x_position - count][y_position] = '-';
+                    }
+                } else {
                     matrix[x_position - count][y_position] = '+';
                 }
                 x_position = x_position - count;
