@@ -20,54 +20,33 @@ const populateOrbits = function (input) {
 
 const getTotalTransfers = function (orbits) {
     let startPlanet = orbits.find(o => o.value.includes('YOU'));
-    return calculateOrbitTransfers(orbits, startPlanet.key, ['YOU']);
+    return calculateOrbitTransfers(orbits, startPlanet.key, 'YOU') - 1;
 }
 
-const calculateOrbitTransfers = function (orbits, startPlanet, visitedPlanets) {
-    let count = 0;
+const calculateOrbitTransfers = function (orbits, startPlanet, previousVisitedPlanet) {
     let planetsToVisit = [];
     let currentPlanet = orbits.find(o => o.key === startPlanet);
     if (currentPlanet) {
-        planetsToVisit = planetsToVisit.concat(currentPlanet.value.filter(p => !visitedPlanets.includes(p)));
+        planetsToVisit = planetsToVisit.concat(currentPlanet.value.filter(p => p !== previousVisitedPlanet));
     }
 
     let parentPlanet = orbits.find(o => o.value.includes(startPlanet));
-    if (parentPlanet && !visitedPlanets.includes(parentPlanet.key)) {
+    if (parentPlanet && previousVisitedPlanet !== parentPlanet.key) {
         planetsToVisit = planetsToVisit.concat(parentPlanet.key);
     }
 
     for (let planet of planetsToVisit) {
         if (planet === 'SAN') {
-            return count + 1;
+            return 1;
         } else {
-            if (orbits.find(o => o.key === planet)) {
-                return calculateOrbitTransfers(orbits, planet, visitedPlanets);
-            } else {
-                
+            let count = calculateOrbitTransfers(orbits, planet, startPlanet);
+            if (count > 0) {
+                return count + 1;
             }
         }
     }
 
-    visitedPlanets.push(startPlanet);
     return 0;
-
-    // let parentPlanet = orbits.find(o => o.key === startPlanet);
-    // if (parentPlanet) {
-    //     for (let child of parentPlanet.value) {
-    //         if (child === 'SAN') {
-    //             return count + 1;
-    //         } else {
-    //             let parent = orbits.find(o => o.key === child);
-    //             if (parent) {
-    //                 return calculateOrbitTransfers(orbits, child);
-    //             } else {
-    //                 return 0;
-    //             }
-    //         }
-    //     }
-    // }
-
-    // return 0;
 }
 
 const localOrbits = populateOrbits(input);
