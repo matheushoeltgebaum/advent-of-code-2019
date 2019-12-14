@@ -1,41 +1,70 @@
 const fs = require('fs'), path = require('path');
 const input = fs.readFileSync(path.join(__dirname, './second-puzzle.input'), 'utf-8').split('\n');
 
-const calculatePreviousState = function (previousStates, moons) {
-    let currentState = [];
-
-    for (let moon of moons) {
-        currentState.push({ pos: { x: moon.pos.x, y: moon.pos.y, z: moon.pos.z }});
-    }
-
-    previousStates.push(currentState);
-    return previousStates;
+const calculateInitialState = function (moons) {
+    return { states_x: moons.map(m => m.pos.x), states_y: moons.map(m => m.pos.y), states_z: moons.map(m => m.pos.z) };
 }
 
-const checkPreviousState = function (previousStates, currentState) {
-    for (let previousState of previousStates) {
-        for (let i = 0; i < previousState.length; i++) {
-            if (previousState[i].pos.x === currentState[i].pos.x && 
-                previousState[i].pos.y === currentState[i].pos.y && 
-                previousState[i].pos.z === currentState[i].pos.z) {
-                    continue;
-                }
-            else {
-                return false;
-            }
+const checkState = function (initialState, currentState) {
+    let sameState_x = true;
+    let sameState_y = true;
+    let sameState_z = true;
+
+    for (let i = 0; i < initialState.states_x.length; i++) {
+        if (initialState.states_x[i] === currentState[i].pos.x) {
+            continue;
+        } else {
+            sameState_x = false;
         }
-    
-        return true;
     }
+
+    for (let i = 0; i < initialState.states_y.length; i++) {
+        if (initialState.states_y[i] === currentState[i].pos.y) {
+            continue;
+        } else {
+            sameState_y = false;
+        }
+    }
+
+    for (let i = 0; i < initialState.states_z.length; i++) {
+        if (initialState.states_z[i] === currentState[i].pos.z) {
+            continue;
+        } else {
+            sameState_z = false;
+        }
+    }
+
+    return { sameState_x: sameState_x, sameState_y: sameState_y, sameState_z: sameState_z };
+}
+
+const lcm = function (num1, num2) {
+    var remainder, a, b;
+
+    a = num1;
+    b = num2;
+
+    do {
+        remainder = a % b;
+
+        a = b;
+        b = remainder;
+
+    } while (remainder !== 0);
+
+    return (num1 * num2) / a;
 }
 
 const calculateGravity = function(moons) {
     let hasBecomePreviousState = false;
-    let previousStates = calculatePreviousState([], moons);
-    let stepCount = 1;
+    let initialState = calculateInitialState(moons);
+    let stepsCountSame_x = 1;
+    let foundSame_x = false;
+    let stepsCountSame_y = 1;
+    let foundSame_y = false;
+    let stepsCountSame_z = 1;
+    let foundSame_z = false;
 
     while (!hasBecomePreviousState) {
-        previousStates = calculatePreviousState(previousStates, moons);
         let velocities = [];
 
         for (let mainMoonIndex = 0; mainMoonIndex < moons.length; mainMoonIndex++) {
@@ -82,11 +111,28 @@ const calculateGravity = function(moons) {
             moons[indexVelocity].pos.z = moons[indexVelocity].pos.z + velocities[indexVelocity].z;
         }
 
-        hasBecomePreviousState = checkPreviousState(previousStates, moons);
-        stepCount++;
+        let checkResult = checkState(initialState, moons);
+        
+        if (!foundSame_x) {
+            foundSame_x = checkResult.sameState_x;
+            stepsCountSame_x++;
+            hasBecomePreviousState = foundSame_x && foundSame_y && foundSame_z;
+        }
+
+        if (!foundSame_y) {
+            foundSame_y = checkResult.sameState_y;
+            stepsCountSame_y++;
+            hasBecomePreviousState = foundSame_x && foundSame_y && foundSame_z;
+        }
+
+        if (!foundSame_z) {
+            foundSame_z = checkResult.sameState_z;
+            stepsCountSame_z++;
+            hasBecomePreviousState = foundSame_x && foundSame_y && foundSame_z;
+        }
     }
 
-    return stepCount;
+    return lcm(lcm(stepsCountSame_x, stepsCountSame_y), stepsCountSame_z);
 }
 
 let moons = [];
